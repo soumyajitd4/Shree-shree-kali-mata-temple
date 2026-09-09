@@ -1,0 +1,65 @@
+/* Finishing touches shared by desktop and mobile. */
+h1, h2, h3 { text-wrap: balance; }
+.site-header { backdrop-filter: blur(16px); }
+.brand-mark, .menu-button { flex-shrink: 0; }
+.brand-mark { width: 44px; height: 58px; border-radius: 50%; background: #fffbdc; padding: 3px; }
+.brand-mark img { width: 100%; height: 100%; max-width: 100%; object-fit: contain; object-position: center; border-radius: 50%; }
+.footer img { width: 44px; height: 58px; padding: 3px; object-fit: contain; object-position: center; background: #fffbdc; border: 1px solid #c88319; border-radius: 50%; }
+.hero { background: radial-gradient(ellipse at 78% 40%, #fff8df 0%, transparent 50%), linear-gradient(115deg, #f8ead0, #f2d49d); }
+.art-frame { border-radius: 180px 180px 8px 8px; overflow: hidden; box-shadow: 0 24px 65px #6d361a26; }
+.art-frame::before { border-radius: 170px 170px 4px 4px; }
+.art-frame img { border-radius: 170px 170px 3px 3px; }
+.hero-art figcaption { text-align: center; }
+.gallery-item { height: 340px; min-height: 0; }
+.gallery-current { height: 650px; }
+.gallery-item img { min-height: 0; }
+.gallery-item::after { pointer-events: none; }
+.gallery-item figcaption { pointer-events: none; }
+.photo-open { position: absolute; inset: 0; width: 100%; border: 0; padding: 0; background: transparent; cursor: zoom-in; }
+.photo-open:focus-visible { outline-offset: -5px; }
+.support-card { min-height: 205px; }
+.in-kind-heading { padding: 20px 0; }
+.in-kind-heading > * { padding-inline: 25px; }
+.payment-card { border-radius: 6px; box-shadow: 0 24px 64px #36160826; }
+.payment-card::before { border-radius: 3px; }
+.copy-button { min-width: 44px; min-height: 44px; bottom: 5px; border-bottom: 0; text-decoration: underline; }
+.photo-dialog { width: min(1100px, 94vw); max-height: 92dvh; padding: 18px; border: 1px solid #bd9957; border-radius: 8px; background: #fff7e8; }
+.photo-dialog::backdrop { background: #220c0ee6; backdrop-filter: blur(5px); }
+.photo-dialog img { margin: auto; max-height: 74dvh; object-fit: contain; }
+.photo-dialog p { margin: 14px 0 0; font-family: Georgia, serif; text-align: center; }
+.photo-close { display: block; margin: 0 0 12px auto; min-height: 44px; padding: 8px 16px; border: 1px solid #691719; color: #691719; background: transparent; cursor: pointer; }
+.nav-links a[aria-current="location"] { text-decoration: underline; text-underline-offset: 6px; }
+@media (min-width: 821px) and (max-width: 1050px) {
+  .nav { gap: 12px; }
+  .nav-links { gap: 14px; }
+  .brand-copy strong { font-size: .86rem; }
+}
+@media (max-width: 820px) {
+  .nav-links:not(.is-open) { visibility: hidden; }
+  .nav-links.is-open { visibility: visible; }
+  .gallery-item { height: 330px; }
+  .gallery-current { height: 500px; }
+  .nav { gap: 8px; }
+}
+@media (max-width: 600px) {
+  .in-kind-heading { display: block; }
+  .in-kind-heading small { display: block; margin-top: 8px; }
+}
+@media (max-width: 500px) {
+  .gallery-item { min-height: 0; height: 330px; }
+  .gallery-current { height: 460px; }
+  .brand-copy strong { font-size: clamp(.57rem, 2.6vw, .81rem); }
+  .photo-dialog { padding: 12px; }
+}
+
+/* Preserve the complete portrait photos, including the paired column views. */
+.gallery-columns, .gallery-side, .gallery-current { height: auto; min-height: 0; background: #f5ead6; }
+.gallery-columns .photo-open, .gallery-side .photo-open, .gallery-current .photo-open { position: relative; display: block; height: auto; }
+.gallery-columns img, .gallery-side img, .gallery-current img { width: 100%; height: auto; min-height: 0; max-height: 680px; object-fit: contain; }
+.gallery-columns::after, .gallery-side::after, .gallery-current::after { display: none; }
+.gallery-columns figcaption, .gallery-side figcaption, .gallery-current figcaption { position: relative; inset: auto; padding: 20px; color: #fff7e8; background: #410d12; }
+.gallery-columns:hover img, .gallery-side:hover img, .gallery-current:hover img { transform: none; }
+@media (max-width: 820px) {
+  .brand-mark { width: 36px; height: 48px; }
+  .brand-mark img { width: 100%; height: 100%; }
+}
