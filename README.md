@@ -22,3 +22,15 @@ Photographs and illustrations were supplied by the Trust. Payment details must b
 
 Requested repository name: `Shree-shree-kali-mata-temple`.
 Future approved website edits should be committed and pushed to this repository once GitHub authentication and the remote are connected. Never commit credentials or unrelated source documents.
+
+## One-way sync to the live website
+
+`.github/workflows/sync-temple.yml` copies website files from this repository's `main` branch to `shreeshreekalimatatempletrust/temple`, also on `main`. The destination's existing GitHub Pages configuration handles deployment. Make website edits here, not in both repositories.
+
+- Store a destination-scoped token as the source repository's Actions secret `TEMPLE_SYNC_TOKEN`. It needs Contents read/write on `shreeshreekalimatatempletrust/temple`. Replace it before it expires; never commit it.
+- Keep the source repository's Actions variable `TEMPLE_SYNC_ENABLED` set to `false` until local changes are approved. A missing variable also disables publishing.
+- To preview, open Actions → Sync temple website → Run workflow on `main`, leaving `dry_run` checked. This checks out both repositories and reports proposed file changes, without writing to the destination. It does not prove that the token has push permission.
+- After approval, set `TEMPLE_SYNC_ENABLED` to `true` and manually run with `dry_run` unchecked for the first sync. Changing the variable alone does not start a run. Later pushes touching the listed website files sync automatically.
+- To pause, set the variable back to `false`. Even a manual run with `dry_run` unchecked cannot publish while paused.
+
+The workflow copies the six listed HTML/CSS/JS files and adds or updates `assets/`. It preserves the destination's `.git`, `.github`, `CNAME`, README and other settings, and does not delete destination-only assets. New root-level website files must be added to both the workflow's path filters and its file list. Direct edits to the destination's managed website files can be overwritten by the next sync. Commits preserve history and pushes are never forced; branch protection may require a different, pull-request-based workflow.

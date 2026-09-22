@@ -1,0 +1,105 @@
+name: Sync temple website
+
+on:
+  push:
+    branches: [main]
+    # Installing or editing this workflow alone never publishes the website.
+    paths:
+      - index.html
+      - contact.html
+      - styles.css
+      - refinements.css
+      - script.js
+      - community.js
+      - assets/**
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Preview changes only (do not update the Trust repository)'
+        type: boolean
+        required: true
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-temple-main
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: >-
+      github.repository == 'soumyajitd4/Shree-shree-kali-mata-temple' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'workflow_dispatch' || vars.TEMPLE_SYNC_ENABLED == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check required secret is configured
+        env:
+          SYNC_TOKEN: ${{ secrets.TEMPLE_SYNC_TOKEN }}
+        shell: bash
+        run: |
+          if [[ -z "$SYNC_TOKEN" ]]; then
+            echo '::error::Add the TEMPLE_SYNC_TOKEN repository secret before running this workflow.'
+            exit 1
+          fi
+
+      - name: Check out latest source website
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          path: source
+          persist-credentials: false
+
+      - name: Check out Trust repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: shreeshreekalimatatempletrust/temple
+          ref: main
+          path: temple
+          token: ${{ secrets.TEMPLE_SYNC_TOKEN }}
+
+      - name: Stage website files and optionally publish
+        working-directory: temple
+        shell: bash
+        env:
+          PUBLISH: ${{ vars.TEMPLE_SYNC_ENABLED == 'true' && (github.event_name == 'push' || inputs.dry_run == false) }}
+        run: |
+          set -euo pipefail
+          files=(index.html contact.html styles.css refinements.css script.js community.js)
+          for file in "${files[@]}"; do
+            test -f "../source/$file"
+            test ! -L "$file"
+            cp "../source/$file" "$file"
+          done
+          test -d ../source/assets
+          test ! -L assets
+          mkdir -p assets
+          # Do not delete destination-only assets or copy hosting/repository settings.
+          rsync -r --exclude='.*' ../source/assets/ assets/
+          git add -- "${files[@]}" assets/
+          source_sha=$(git -C ../source rev-parse HEAD)
+          {
+            echo '## Temple website sync'
+            echo "Source commit: $source_sha"
+            echo 'Destination: shreeshreekalimatatempletrust/temple (main)'
+            echo '```text'
+            git diff --cached --stat
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          if git diff --cached --quiet; then
+            echo 'Website files already match. No commit needed.' >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if [[ "$PUBLISH" != 'true' ]]; then
+            echo 'Preview only: nothing was committed or pushed. Publishing requires TEMPLE_SYNC_ENABLED=true and a push event or dry_run=false.' >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "Sync website from source ${source_sha:0:12}"
+          # A concurrent destination edit causes a safe failure, never a force push.
+          git push origin HEAD:main
+          echo 'Website changes pushed. Check the destination repository for its Pages deployment.' >> "$GITHUB_STEP_SUMMARY"
