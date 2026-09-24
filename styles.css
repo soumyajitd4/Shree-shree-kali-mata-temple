@@ -126,7 +126,7 @@ section[id] { scroll-margin-top: 130px; }
 .hero {
   position: relative;
   overflow: hidden;
-  padding: clamp(75px, 10vw, 132px) 0 clamp(75px, 8vw, 110px);
+  padding: clamp(37.5px, 5vw, 66px) 0 clamp(75px, 8vw, 110px);
   background: linear-gradient(115deg, #f8ead0 0%, #f4dfb8 54%, #f2d49d 100%);
 }
 
@@ -341,7 +341,7 @@ tbody tr:last-child td { border-bottom: 0; }
   .nav-donate { margin: 12px 9% 17px; text-align: center; box-shadow: none; }
 
   .hero-grid, .introduction-grid, .vision-art-grid, .donate-grid { grid-template-columns: 1fr; }
-  .hero { padding-top: 68px; }
+  .hero { padding-top: 34px; }
   .hero-copy { text-align: center; }
   .eyebrow, .hero-actions, .location-line { justify-content: center; }
   .hero-lead, .location-line { margin-inline: auto; }

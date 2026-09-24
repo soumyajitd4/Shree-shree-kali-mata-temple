@@ -14,7 +14,20 @@ Deploy the website files to static hosting, keeping the `assets` directory along
 - Interaction: `script.js`
 - YouTube and automatic Instagram preview: `community.js`
 
-The Instagram section automatically embeds one selected public post, not a live feed of new posts. Keep Website embeds enabled in the Trust's Instagram account, and change the post permalink in `community.js` when a different post should be featured. Browser privacy controls can still prevent third-party embeds from loading.
+The social previews load automatically when visitors approach the community section, reducing third-party work on initial page load. The Instagram section embeds one selected public post, not a live feed of new posts. Keep Website embeds enabled in the Trust's Instagram account, and change the post permalink in `community.js` when a different post should be featured. Instagram controls whether its preview plays inline or opens Instagram; browser privacy controls can also prevent third-party embeds from loading.
+
+## September 2026 mobile refinements
+
+- Payment values and Copy buttons occupy separate columns; each Copy button has a descriptive accessible name.
+- The floating donation shortcut hides while the payment section or footer is visible.
+- Phone footer links retain their icons and labels in a single row; full destinations remain in link accessible text and stay visible on larger screens.
+- Mobile branding is more readable, and menu/contact/back-to-top controls have larger touch targets.
+- The menu closes on outside click, focus leaving the navigation, Escape, link selection or breakpoint changes, with an accurate Open/Close label.
+- In-page targets account for the sticky header, including the receipt-contact link and registration details.
+- The tablet gallery uses two balanced columns; the full-photo dialog locks background scrolling and preserves full original photos.
+- Hero loading is prioritized; the QR loads lazily without changing its image or payment content. Instagram loading is contained within its card, with space reserved to reduce layout movement.
+
+Local verification covered 320, 375, 430, 768, 1024 and 1440px viewport widths, payment control overlap, footer overflow, navigation, receipt-contact targeting, copy feedback and photo dialog interactions. HTML links/assets, payment values, gallery sequence, QR pixels and JavaScript syntax were also checked. Viewport emulation is not a substitute for testing on physical iOS and Android devices.
 
 Photographs and illustrations were supplied by the Trust. Payment details must be checked with the Trust before publication. The construction photos are arranged by apparent construction stage; exact dates have not been verified.
 

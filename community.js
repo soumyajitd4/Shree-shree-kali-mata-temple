@@ -41,8 +41,21 @@ function loadInstagramPreview() {
 }
 
 function loadCommunityPreviews() {
-  loadYouTubePreview();
-  loadInstagramPreview();
+  const section = document.querySelector('#community');
+  const load = () => {
+    loadYouTubePreview();
+    loadInstagramPreview();
+  };
+  if (section && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      observer.disconnect();
+      load();
+    }, { rootMargin: '600px 0px' });
+    observer.observe(section);
+  } else {
+    load();
+  }
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', loadCommunityPreviews, { once: true });

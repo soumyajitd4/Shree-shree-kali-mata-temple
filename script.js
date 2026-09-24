@@ -3,6 +3,13 @@ const navLinks = document.querySelector(".nav-links");
 const toast = document.querySelector(".toast");
 let toastTimer;
 
+function setMenuOpen(open) {
+  menuButton?.setAttribute("aria-expanded", String(open));
+  const label = menuButton?.querySelector(".sr-only");
+  if (label) label.textContent = open ? "Close menu" : "Open menu";
+  navLinks?.classList.toggle("is-open", open);
+}
+
 function showToast(message) {
   toast.textContent = message;
   toast.classList.add("is-visible");
@@ -12,18 +19,17 @@ function showToast(message) {
 
 menuButton?.addEventListener("click", () => {
   const isOpen = menuButton.getAttribute("aria-expanded") === "true";
-  menuButton.setAttribute("aria-expanded", String(!isOpen));
-  navLinks.classList.toggle("is-open", !isOpen);
+  setMenuOpen(!isOpen);
 });
 
 navLinks?.querySelectorAll("a").forEach((link) => {
   link.addEventListener("click", () => {
-    menuButton?.setAttribute("aria-expanded", "false");
-    navLinks.classList.remove("is-open");
+    setMenuOpen(false);
   });
 });
 
 document.querySelectorAll("[data-copy]").forEach((button) => {
+  button.setAttribute("aria-label", `Copy ${button.closest(".payment-field").querySelector("span").textContent}`);
   button.addEventListener("click", async () => {
     const value = button.dataset.copy;
     try {
@@ -63,16 +69,36 @@ document.querySelectorAll(".gallery-item").forEach((figure) => {
 });
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && menuButton.getAttribute("aria-expanded") === "true") {
-    menuButton.setAttribute("aria-expanded", "false");
-    navLinks.classList.remove("is-open");
+    setMenuOpen(false);
     menuButton.focus();
   }
 });
+document.addEventListener("click", event => {
+  if (!event.target.closest(".nav")) setMenuOpen(false);
+});
+document.addEventListener("focusin", event => {
+  if (!event.target.closest(".nav")) setMenuOpen(false);
+});
+window.matchMedia("(max-width: 820px)").addEventListener("change", () => setMenuOpen(false));
 const header = document.querySelector(".site-header");
 if ("ResizeObserver" in window) {
   new ResizeObserver(() => {
-    document.querySelectorAll("section[id]").forEach(section => {
+    document.querySelectorAll("section[id], #trust-contacts, #registration, #main, #footer").forEach(section => {
       section.style.scrollMarginTop = `${header.offsetHeight + 18}px`;
     });
   }).observe(header);
+}
+
+// The fixed shortcut is unnecessary while payment details or the footer are visible.
+const mobileDonate = document.querySelector(".mobile-donate");
+if (mobileDonate && "IntersectionObserver" in window) {
+  const visibleTargets = new Set();
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) visibleTargets.add(entry.target);
+      else visibleTargets.delete(entry.target);
+    });
+    mobileDonate.hidden = visibleTargets.size > 0;
+  });
+  document.querySelectorAll("#donate, #footer").forEach(target => observer.observe(target));
 }
